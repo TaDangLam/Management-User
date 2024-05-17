@@ -6,20 +6,20 @@ import middlewareToken from './jwtService.js';
 
 const authService = {
     register: async(newUser) => {
-        const { name, email, password, phone, fullName } = newUser;
+        const { username, fullname, password, confirmps, email, phone } = newUser;
         try {
-            const checkUser = await Auth.findOne({ name });
+            const checkUser = await Auth.findOne({ username });
             // console.log(checkUser)
             if (checkUser) {
                 throw new Error('This user is exist');
             }
             const hashed = bcrypt.hashSync(password, 10)
             const newUserDoc = new Auth({
-                name,
-                fullName,
+                username,
+                fullname,
                 email,
                 password: hashed,
-                confirmPassword: hashed,
+                confirmps: hashed,
                 phone,
             });
             const user = await newUserDoc.save();
@@ -33,9 +33,9 @@ const authService = {
         }
     },
     login: async(user) => {
-        const { name,  password } = user;
+        const { username, password } = user;
             try {
-                const checkUser = await Auth.findOne({name});
+                const checkUser = await Auth.findOne({ username });
                 if(checkUser === null) {
                     throw new Error('User is not exist');
                 }
