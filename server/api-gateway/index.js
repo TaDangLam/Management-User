@@ -3,40 +3,73 @@ const app = express();
 import cors from 'cors';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
-import proxy from 'express-http-proxy';
-// import { createProxyMiddleware } from 'http-proxy-middleware';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import { StatusCodes } from 'http-status-codes';
 
 dotenv.config();
-const PORT = process.env.PORT || 4000;   // PORT = 4000
+const PORT = process.env.PORT || 4000;   // PORT = 8000
 
 // Middleware
+// Middleware
 app.use(cors());
+app.use(bodyParser.json())
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("./public"));
 
-
-app.use('/api/auth', proxy(process.env.AUTH_SERVICE_URL));
-app.use('/api/user', proxy(process.env.USER_SERVICE_URL));
-// // Proxy route cho auth-service 
-// app.use('/api/auth', createProxyMiddleware({
+// Proxy route cho auth-service 
+// app.use('/auth-service', createProxyMiddleware({
 //     target: process.env.AUTH_SERVICE_URL,
 //     changeOrigin: true,
 //     pathRewrite: {
-//         '^/api/auth': '/api/auth',
+//         '^/auth-service': ''
 //     },
 //     onError: (err, req, res) => {
-//         console.error('Proxy Error:', err);
-//         res.status(500).send('Proxy Error');
+//         console.error('Proxy Auth Error:', err);
+//         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
 //     }
 // }));
 
-// // Proxy route cho user-service
-// app.use('/api/user', createProxyMiddleware({
-//     target: process.env.USER_SERVICE_URL,
-//     changeOrigin: true,
-//     pathRewrite: {
-//         '^/api/user': '/api/user',
-//     }
-// }));
+
+const proxyAuthMiddleware = (req, res, next) => {
+    // In ra thông tin yêu cầu trước khi chuyển tiếp
+    console.log('Incoming request to /auth-service:', req.method, req.url, req.body);
+
+    // Chuyển tiếp yêu cầu đến auth-service
+    createProxyMiddleware({
+        target: process.env.AUTH_SERVICE_URL,
+        changeOrigin: true,
+        onError: (err, req, res) => {
+            console.error('Proxy Auth Error:', err);
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+        }
+    })(req, res, (err) => {
+        if (err) {
+            console.error('Error forwarding request to auth-service:', err);
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
+        }
+        // In ra thông tin phản hồi sau khi nhận được từ auth-service
+        console.log('Response from auth-service:', res.statusCode, res.body);
+        next(); // Chuyển tiếp cho các middleware tiếp theo nếu có
+    });
+};
+
+app.use('/auth-service', proxyAuthMiddleware);
+
+
+
+// -----------------------------------------------------------------------------------
+// // Proxy route cho auth-service 
+app.use('/user-service', createProxyMiddleware({
+    target: process.env.USER_SERVICE_URL,
+    changeOrigin: true,
+    pathRewrite: {
+        '^/user-service': ''
+    },
+    onError: (err, req, res) => {
+        console.error('Proxy User Error:', err);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    }
+}));
+
 
 app.listen(PORT, () => console.log(`API Gateway is running on http://localhost:${PORT}`));

@@ -1,7 +1,7 @@
 import { AuthRoute } from "./authRoute.js";
 
 const routes = (app) => {
-    app.use('/api/user', UserRoute);
+    app.use('/user', UserRoute);
 }
 
 export default routes;

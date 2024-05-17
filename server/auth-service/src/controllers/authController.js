@@ -7,7 +7,7 @@ import middlewareToken from '../service/jwtService.js';
 const authController = {
     test: async(req, res) => {
         try {
-            res.status(StatusCodes.CREATED).json('OKEEEE');
+            res.status(StatusCodes.OK).json('OKEEEE');
         } catch (error) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
         }
@@ -33,6 +33,7 @@ const authController = {
     loginUser: async(req, res) => {
         try {
             const { username, password } = req.body;
+            console.log(req.body)
             if( !username || !password ){
                 return res.status(StatusCodes.BAD_REQUEST).json({error: 'Please complete all information'});
             }

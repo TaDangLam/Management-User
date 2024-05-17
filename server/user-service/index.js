@@ -7,7 +7,7 @@ import bodyParser from 'body-parser';
 import MongoConnect from './src/lib/mongodb.js';
 
 dotenv.config();
-const PORT = process.env.PORT || 4002;      //PORT = 8002
+const PORT = process.env.PORT ;      //PORT = 8002
 
 // Middleware
 app.use(cors());
