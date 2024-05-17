@@ -45,6 +45,10 @@ const authService = {
                     throw new Error('Password is not incorrect');
                 }
                 
+                // Lưu đăng nhập
+                checkUser.lastLogin = new Date();
+                await checkUser.save();
+                
                 // create AccessToken
                 const accessToken = await middlewareToken.genneralAccessToken({
                     id: checkUser._id,
@@ -59,7 +63,7 @@ const authService = {
                 const userWithoutPassword = {
                     ...checkUser._doc,
                     password: undefined,
-                    confirmPassword: undefined,
+                    confirmps: undefined,
                 };
                 
                 return({

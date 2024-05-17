@@ -11,8 +11,8 @@ const authSchema = new mongoose.Schema ({
     phone: {type: String, required: true},
     email: {type: String, required: true},
     role: {type: String, enum: authEnum, default: 'customer'},
-    token: {type: String},
-    tokenExpiryDate: {type: Date},
+    // token: {type: String},
+    // tokenExpiryDate: {type: Date},
     lastLogin: {type: Date},
     accountStatus: {type: String, enum: accountStatus, default: 'active'}
 }, {
