@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const authEnum = ['admin', 'customer'];
-const accountStatus = ['active', 'inactive'];
+const accountStatus = ['active', 'inactive', 'deleted'];
 
 const authSchema = new mongoose.Schema ({
     username: {type: String, required: true},

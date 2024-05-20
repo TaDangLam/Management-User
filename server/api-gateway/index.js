@@ -2,17 +2,13 @@ import express from 'express';
 const app = express();
 import cors from 'cors';
 import dotenv from 'dotenv';
-import bodyParser from 'body-parser';
 import { createProxyMiddleware } from 'http-proxy-middleware';
-import { StatusCodes } from 'http-status-codes';
 
 dotenv.config();
 const PORT = process.env.PORT || 4000;   // PORT = 8000
 
 // Middleware
-// Middleware
 app.use(cors());
-// app.use(bodyParser.json())
 app.use(express.json());
 app.use(express.static("./public"));
 
@@ -59,17 +55,17 @@ app.use('/auth-service', createProxyMiddleware({
 
 // -----------------------------------------------------------------------------------
 // // Proxy route cho auth-service 
-app.use('/user-service', createProxyMiddleware({
-    target: process.env.USER_SERVICE_URL,
-    changeOrigin: true,
-    pathRewrite: {
-        '^/user-service': ''
-    },
-    onError: (err, req, res) => {
-        console.error('Proxy User Error:', err);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
-    }
-}));
+// app.use('/user-service', createProxyMiddleware({
+//     target: process.env.USER_SERVICE_URL,
+//     changeOrigin: true,
+//     pathRewrite: {
+//         '^/user-service': ''
+//     },
+//     onError: (err, req, res) => {
+//         console.error('Proxy User Error:', err);
+//         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+//     }
+// }));
 
 
 app.listen(PORT, () => console.log(`API Gateway is running on http://localhost:${PORT}`));
