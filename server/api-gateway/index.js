@@ -55,17 +55,17 @@ app.use('/auth-service', createProxyMiddleware({
 
 // -----------------------------------------------------------------------------------
 // // Proxy route cho auth-service 
-// app.use('/user-service', createProxyMiddleware({
-//     target: process.env.USER_SERVICE_URL,
-//     changeOrigin: true,
-//     pathRewrite: {
-//         '^/user-service': ''
-//     },
-//     onError: (err, req, res) => {
-//         console.error('Proxy User Error:', err);
-//         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
-//     }
-// }));
+app.use('/authorization-service', createProxyMiddleware({
+    target: process.env.AUTHORIZATION_SERVICE_URL,
+    changeOrigin: true,
+    pathRewrite: {
+        '^/authorization-service': ''
+    },
+    onError: (err, req, res) => {
+        console.error('Proxy Authorization Error:', err);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    }
+}));
 
 
 app.listen(PORT, () => console.log(`API Gateway is running on http://localhost:${PORT}`));
