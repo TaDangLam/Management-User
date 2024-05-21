@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 4001;  // PORT = 8001
 app.use(cors());
 // app.use(bodyParser.json())
 app.use(express.json());
-app.use(express.static("./public"));
+app.use(express.static("./src/public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Connect Database

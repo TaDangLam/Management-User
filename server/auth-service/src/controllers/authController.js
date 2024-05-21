@@ -7,6 +7,7 @@ const authController = {
     register: async(req, res) => {
         try {
             const { username, fullname, password, confirmps, email, phone } = req.body;
+            console.log(req.body)
             const regex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
             const checkMail = regex.test(email);
             if(!username || !email || !password || !phone || !fullname){

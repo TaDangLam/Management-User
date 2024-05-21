@@ -137,11 +137,13 @@ const authService = {
     },
     updateUser: async(id, data) => {
         try {
-            const { username, fullname, password, confirmps, phone, email, accountStatus } = data;
+            const { username, fullname, password, confirmps, phone, email, accountStatus, avatar } = data;
             const checkUser = await Auth.findById(id);
             if(checkUser === null) {
                 throw new Error('User is not exist');
             }
+            const filterImages = Array.isArray(avatar) ? avatar.filter(newImg => !checkUser.avatar.includes(newImg)) : [];
+
             const updateFields = {};
             if (email) updateFields.email = email;
             if (fullname) updateFields.fullname = fullname;
@@ -154,6 +156,10 @@ const authService = {
                 updateFields.password = hashedPassword;
                 updateFields.confirmps = hashedPassword;
             }
+            if (filterImages.length > 0) {
+                updateFields.avatar = filterImages;
+            }
+
             const updatedUser = await Auth.findByIdAndUpdate(id, updateFields, { new: true });
             return({
                 status: 'OK',

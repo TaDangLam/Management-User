@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+import StoreProvider from "./StoreProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,9 +13,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-          <div  className="bg-gradient-to-b from-[#3a7bd5] to-[#7474bf] min-h-screen">
+        <StoreProvider>
+          <div  className="bg-gradient-to-b from-[#2B32B2] to-[#1488CC] min-h-screen">
             {children}
           </div>
+        </StoreProvider>  
       </body>
     </html>
   );

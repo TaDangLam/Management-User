@@ -2,15 +2,16 @@
 import Link from "next/link";
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { AiOutlineMail, AiOutlineLock } from "react-icons/ai";
 import Swal from "sweetalert2";
 
 import { Login, getAllUser, getDetailUser } from "./api/route";
 
 export default function Home() {
+  const dispatch = useDispatch();
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState([]);
   const router = useRouter();
 
   const handleLogin = async(e) => {
@@ -20,7 +21,7 @@ export default function Home() {
       bodyFormData.append('username', username);
       bodyFormData.append('password', password);
 
-      const data = await Login(bodyFormData);
+      const data = await Login(bodyFormData, dispatch);
       const Toast = Swal.mixin({
           toast: true,
           position: "top-end",
@@ -52,7 +53,7 @@ export default function Home() {
           });
           Toast.fire({
             icon: "error",
-            title: `${error}`
+            title: `${error.response.data.error}`
           });
     }
   }
@@ -65,22 +66,9 @@ export default function Home() {
     }
   }
 
-  // useEffect(() => {
-  //   getAllProductForAdmin();
-  // }, []);
-
-  // const getAllProductForAdmin = async() => {
-  //   try {
-  //     const data = await getDetailUser('66471079dcad52bb1afef26b','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjoiNjY0YWIyNzIyNWJmN2I3NTcxM2M0OTdmIiwicm9sZSI6ImFkbWluIn0sImlhdCI6MTcxNjI1NTYyMiwiZXhwIjoxNzE3OTgzNjIyfQ.pOn8gKzKqJIl-0ZfT63ijnmME3fMpewBq0VhEoqy4Mw');
-  //     setUser(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-  // console.log(user)
   return (
     <div className="flex items-center justify-center h-screen ">
-        <div className="flex flex-col bg-slate-200 h-3/6 w-3/6 shadow-login rounded-[25px]">
+        <div className="flex flex-col bg-slate-200 h-3/6 w-3/6 shadow-2xl rounded-[25px]">
             <div className="flex flex-col w-full h-5/6 rounded-t-[25px] p-5">
                 <div className="flex text-5xl font-bold items-center justify-center text-[#005AA7]">Login</div>
                 <div className="flex items-center justify-center text-[#005AA7]">---------------------------</div>
@@ -106,11 +94,11 @@ export default function Home() {
                       />
                   </label>
                   <div className="flex w-72 items-center justify-between">
-                      <Link href={'/auth/signin'} className="hover:text-[#005AA7] hover:opacity-75 duration-300">Sign in</Link>
+                      <Link href={'/signup'} className="hover:text-[#005AA7] hover:opacity-75 duration-300">Sign up</Link>
                       <Link href={'/auth/forgotPassword'} className="hover:text-[#005AA7] hover:opacity-75 duration-300">Forgot Password</Link>
                   </div>
                   <button type="submit" className="flex item-center justify-center bg-[#005AA7] text-white w-36 rounded-full my-3 p-3 hover:opacity-75 duration-300">
-                      Sign In
+                      Login
                   </button>
                 </form>
             </div>

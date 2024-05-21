@@ -1,5 +1,6 @@
 import axios from "axios";
-import querystring from 'querystring';
+
+import { login } from '@/lib/features/user/authSlice';
 
 const url = process.env.NEXT_PUBLIC_API_BACKEND;
 
@@ -59,13 +60,11 @@ export const deleteUser = async(id, accessToken) => {
     }
 }
 
-export const Login = async(bodyFormData) => {
+export const Login = async(bodyFormData, dispatch) => {
     try {
-        const response = await axios.post(`${url}/auth-service/login`, querystring.stringify(bodyFormData), {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        });
+        const response = await axios.post(`${url}/auth-service/login`, bodyFormData);
+        const { data, accessToken, refreshToken } = response.data;
+        dispatch(login({ data, accessToken, refreshToken }));
         return response.data.data;
     } catch (error) {
         console.log('Login Router Error: ', error);
@@ -73,13 +72,9 @@ export const Login = async(bodyFormData) => {
     }
 }
 
-export const Register = async(data) => {
+export const Register = async(bodyFormData) => {
     try {
-        const response = await axios.get(`${url}/auth-service/register`, {
-            headers: {
-                authorization: `Bearer ${accessToken}`
-            }
-        });
+        const response = await axios.post(`${url}/auth-service/register`, bodyFormData);
         return response.data.data;
     } catch (error) {
         console.log('Register Router Error: ', error);
