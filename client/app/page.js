@@ -97,7 +97,7 @@ export default function Home() {
                       <Link href={'/signup'} className="hover:text-[#005AA7] hover:opacity-75 duration-300">Sign up</Link>
                       <Link href={'/auth/forgotPassword'} className="hover:text-[#005AA7] hover:opacity-75 duration-300">Forgot Password</Link>
                   </div>
-                  <button type="submit" className="flex item-center justify-center bg-[#005AA7] text-white w-36 rounded-full my-3 p-3 hover:opacity-75 duration-300">
+                  <button type="submit" className="flex item-center font-bold justify-center bg-[#005AA7] text-white w-36 rounded-full my-3 p-3 hover:opacity-75 duration-300">
                       Login
                   </button>
                 </form>

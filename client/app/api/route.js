@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { login } from '@/lib/features/user/authSlice';
+import { login, logout } from '@/lib/features/user/authSlice';
 
 const url = process.env.NEXT_PUBLIC_API_BACKEND;
 
@@ -65,7 +65,7 @@ export const Login = async(bodyFormData, dispatch) => {
         const response = await axios.post(`${url}/auth-service/login`, bodyFormData);
         const { data, accessToken, refreshToken } = response.data;
         dispatch(login({ data, accessToken, refreshToken }));
-        return response.data.data;
+        return response.data.data.role;
     } catch (error) {
         console.log('Login Router Error: ', error);
         throw error;
@@ -80,4 +80,8 @@ export const Register = async(bodyFormData) => {
         console.log('Register Router Error: ', error);
         throw error;
     }
+}
+
+export const Logout = (dispatch) => {
+    dispatch(logout());
 }
