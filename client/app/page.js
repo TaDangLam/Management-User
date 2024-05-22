@@ -62,7 +62,7 @@ export default function Home() {
     if(role === 'admin'){
         router.push('/dashboard');
     }else{
-        router.push('/customer');
+        router.push('/profile');
     }
   }
 

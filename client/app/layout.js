@@ -5,7 +5,6 @@ import { useEffect } from "react";
 
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
-import { JsonParse } from '@/app/api/sessionStorage';
 
 const inter = Inter({ subsets: ["latin"] });
 

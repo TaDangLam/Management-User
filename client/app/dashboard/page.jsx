@@ -1,9 +1,7 @@
 'use client'
 
-import { JsonParse } from '@/app/api/sessionStorage';
-
 const Dashboard = () => {
-    const user = JsonParse('user');
+    const user = JSON.parse(sessionStorage.getItem('user'));
     return ( 
         <div>{user.role}</div>
     );
