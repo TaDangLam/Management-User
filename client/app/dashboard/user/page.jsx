@@ -1,6 +1,7 @@
 'use client'
-import { useEffect, useState } from "react";
-import { Button, Table } from 'antd';
+import { useEffect, useState, useRef } from "react";
+import { Button, Table, Input, Space } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { format } from "date-fns";
 
 import { getAllUser } from "@/app/api/route";
@@ -9,6 +10,9 @@ const User = () => {
     const accessToken = sessionStorage.getItem('accessToken');
     const [users, setUsers] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef(null);
 
     const fetchAllUser = async() => {
         try {
@@ -18,13 +22,14 @@ const User = () => {
             console.log(error)
         }
     }
+
     useEffect(() => {
         fetchAllUser();
     }, []);
-    
+
     const formatDate = (dateString) => {
         return format(new Date(dateString), 'dd-MM-yyyy HH:mm:ss');
-    };  
+    };
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -38,6 +43,54 @@ const User = () => {
                 return '';
         }
     };
+
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+
+    const handleReset = (clearFilters) => {
+        clearFilters();
+        setSearchText('');
+    };
+
+    const getColumnSearchProps = (dataIndex) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8 }}>
+                <Input
+                    ref={searchInput}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{ marginBottom: 8, display: 'block' }}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size="small"
+                        style={{ width: 90 }}
+                    >
+                        Search
+                    </Button>
+                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                        Reset
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        onFilter: (value, record) =>
+            record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: visible => {
+            if (visible) {
+                setTimeout(() => searchInput.current.select(), 100);
+            }
+        },
+    });
 
     const columns = [
         {
@@ -56,26 +109,31 @@ const User = () => {
             title: 'ID',
             dataIndex: '_id',
             key: '_id',
+            ...getColumnSearchProps('_id')
         },
         {
             title: 'Fullname',
             dataIndex: 'fullname',
             key: 'fullname',
+            ...getColumnSearchProps('fullname')
         },
         {
             title: 'Username',
             dataIndex: 'username',
             key: 'username',
+            ...getColumnSearchProps('username')
         },
         {
             title: 'Phone',
             dataIndex: 'phone',
             key: 'phone',
+            ...getColumnSearchProps('phone')
         },
         {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
+            ...getColumnSearchProps('email')
         },
         {
             title: 'Role',
@@ -103,14 +161,31 @@ const User = () => {
             dataIndex: 'createdAt',
             key: 'createdAt',
             render: (text) => formatDate(text),
+            sorter: (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         },
         {
             title: 'UpdatedAt',
             dataIndex: 'updatedAt',
             key: 'updatedAt',
             render: (text) => formatDate(text),
+            sorter: (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
         },
-
+        {
+            title: 'Operation',
+            key: 'operation',
+            render: (text, record) => (
+                <div className="flex flex-col justify-center gap-2 w-full">
+                    <Space className="flex items-center w-full">
+                        <div className="bg-[#2b9cd2] text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => handleUpdate(record)}>Update</div>
+                        <div className="bg-[#e11d48] text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => handleDelete(record)}>Delete</div>
+                    </Space>
+                    <Space className="flex items-center w-full">
+                        <div className="bg-[#65a30d] text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => handleUpdate(record)}>Active</div>
+                        <div className="bg-[#94a3b8] text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => handleDelete(record)} >Inactive</div>
+                    </Space>
+                </div>
+            ),
+        },
     ];
 
     const onSelectChange = (newSelectedRowKeys) => {
@@ -123,14 +198,23 @@ const User = () => {
         onChange: onSelectChange,
     };
 
+    const handleUpdate = async(data) => {
+        console.log(data);
+    }
+
+    const handleDelete = async(data) => {
+        console.log(data);
+    }
+
     return ( 
-        <div>
-            <div style={{ marginBottom: 16 }}>
-                <Button type="primary">Reload</Button>
+        <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
+                <Button onClick={fetchAllUser} className="bg-[#407dc0] font-semibold text-white w-1/12">Reload</Button>
+                <div className="text-xl"><span className="font-semibold">Total User:</span>  {users.length}</div>
             </div>
             <Table dataSource={users} columns={columns} rowKey="_id" scroll={{ x: 1500, y: 600 }} rowSelection={rowSelection}/>
         </div>
     );
 }
- 
+
 export default User;
