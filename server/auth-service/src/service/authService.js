@@ -5,7 +5,7 @@ import middlewareToken from './jwtService.js';
 
 const authService = {
     register: async(newUser) => {
-        const { username, fullname, password, confirmps, email, phone } = newUser;
+        const { username, fullname, password, confirmps, email, phone, sex } = newUser;
         try {
             const checkUser = await Auth.findOne({ username });
             // console.log(checkUser)
@@ -20,6 +20,7 @@ const authService = {
                 password: hashed,
                 confirmps: hashed,
                 phone,
+                sex
             });
             const user = await newUserDoc.save();
             return {

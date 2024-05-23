@@ -6,14 +6,30 @@ import middlewareToken from '../service/jwtService.js';
 const authController = {
     register: async(req, res) => {
         try {
-            const { username, fullname, password, confirmps, email, phone } = req.body;
-            console.log(req.body)
-            const regex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-            const checkMail = regex.test(email);
-            if(!username || !email || !password || !phone || !fullname){
-                return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please complete all information' });
+            const { username, fullname, password, confirmps, email, phone, sex } = req.body;
+            const regexMail = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+            const regexPhoneNumber = /^(\+84|84|0)(3|5|7|8|9|1[2|6|8|9])[0-9]{8}$/;
+            const checkMail = regexMail.test(email);
+            const checkPhone = regexPhoneNumber.test(phone);
+
+            if(!username){
+                return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please enter field username' });
+            } else if (!fullname) {
+                return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please enter field Fullname' });
+            } else if (!password) {
+                return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please enter field Password' });
+            } else if (!confirmps) {
+                return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please enter the password confirmation field as above' });
+            } else if (!email) {
+                return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please enter field Email' });
+            } else if (!phone) {
+                return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please enter field Phone' });
+            } else if (!sex) {
+                return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please select Sex' });
             } else if (!checkMail) {
                 return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Email is not valid' });
+            } else if (!checkPhone) {
+                return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Phone is not valid' });
             } else if (password !== confirmps) {
                 return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Password and confirmPassword is not match' });
             }

@@ -104,13 +104,19 @@ const User = () => {
                 <img
                     src={`${process.env.NEXT_PUBLIC_API_IMAGES}/${record._id}/${text}`}
                     alt="avatar"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full rounded-full object-cover"
                 />
-            ) : (
+            ) : record.sex === 'male' ? (
                 <img
                     src='/images.png'
                     alt="avatar"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full rounded-full object-cover"
+                />
+            ) : (
+                <img
+                    src='/female.png'
+                    alt="avatar"
+                    className="w-full h-full rounded-full object-cover"
                 />
             ),
             width: 90
@@ -132,6 +138,22 @@ const User = () => {
             dataIndex: 'username',
             key: 'username',
             ...getColumnSearchProps('username')
+        },
+        {
+            title: 'Sex',
+            dataIndex: 'sex',
+            key: 'sex',
+            filters: [
+                { text: 'Male', value: 'male' },
+                { text: 'Female', value: 'female' }
+            ],
+            onFilter: (value, record) => record.sex === value,
+            render: (text) => (
+                <span >
+                    {text}
+                </span>
+            ),
+            width: 80
         },
         {
             title: 'Phone',
@@ -164,7 +186,8 @@ const User = () => {
                 <span className={`flex items-center justify-center w-16 px-2.5 py-1 rounded font-semibold text-white ${getStatusColor(text)}`}>
                     {text}
                 </span>
-            )
+            ),
+            width: 140
         },
         {
             title: 'CreatedAt',

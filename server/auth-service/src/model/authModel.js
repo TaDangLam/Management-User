@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const authEnum = ['admin', 'customer'];
 const accountStatus = ['active', 'inactive', 'deleted'];
+const sexEnum = ['male', 'female'];
 
 const authSchema = new mongoose.Schema ({
     username: {type: String, required: true},
@@ -11,9 +12,8 @@ const authSchema = new mongoose.Schema ({
     phone: {type: String, required: true},
     email: {type: String, required: true},
     role: {type: String, enum: authEnum, default: 'customer'},
+    sex: {type: String, enum: sexEnum, default: 'male'},
     avatar: {type: String},
-    // token: {type: String},
-    // tokenExpiryDate: {type: Date},
     lastLogin: {type: Date},
     accountStatus: {type: String, enum: accountStatus, default: 'active'}
 }, {
