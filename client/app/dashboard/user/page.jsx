@@ -3,17 +3,20 @@ import { useEffect, useState, useRef } from "react";
 import { Button, Table, Input, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { format } from "date-fns";
+import Swal from "sweetalert2";
 
 import { getAllUser } from "@/app/api/route";
+import { useRouter } from "next/navigation";
 
 const User = () => {
+    const router = useRouter();
     const accessToken = sessionStorage.getItem('accessToken');
     const [users, setUsers] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
-
+    
     const fetchAllUser = async() => {
         try {
             const data = await getAllUser(accessToken);
@@ -34,11 +37,11 @@ const User = () => {
     const getStatusColor = (status) => {
         switch (status) {
             case 'active':
-                return 'bg-lime-600';
+                return 'bg-lime-700';
             case 'inactive':
                 return 'bg-slate-400';
             case 'deleted':
-                return 'bg-rose-600';
+                return 'bg-rose-800';
             default:
                 return '';
         }
@@ -97,13 +100,20 @@ const User = () => {
             title: 'Avatar',
             dataIndex: 'avatar',
             key: 'avatar',
-            render: (text, record) => (
+            render: (text, record) => text ? (
                 <img
                     src={`${process.env.NEXT_PUBLIC_API_IMAGES}/${record._id}/${text}`}
                     alt="avatar"
-                    style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                    className="w-full h-full object-cover"
+                />
+            ) : (
+                <img
+                    src='/images.png'
+                    alt="avatar"
+                    className="w-full h-full object-cover"
                 />
             ),
+            width: 90
         },
         {
             title: 'ID',
@@ -154,7 +164,7 @@ const User = () => {
                 <span className={`flex items-center justify-center w-16 px-2.5 py-1 rounded font-semibold text-white ${getStatusColor(text)}`}>
                     {text}
                 </span>
-            ),
+            )
         },
         {
             title: 'CreatedAt',
@@ -171,48 +181,80 @@ const User = () => {
             sorter: (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
         },
         {
+            title: 'Last Login',
+            dataIndex: 'lastLogin',
+            key: 'lastLogin',
+            render: (text) => text ? formatDate(text) : '---------------',
+        },
+        {
             title: 'Operation',
             key: 'operation',
             render: (text, record) => (
                 <div className="flex flex-col justify-center gap-2 w-full">
                     <Space className="flex items-center w-full">
-                        <div className="bg-[#2b9cd2] text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => handleUpdate(record)}>Update</div>
-                        <div className="bg-[#e11d48] text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => handleDelete(record)}>Delete</div>
+                        <div className="bg-[#4b6cb7] text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => navigationToUpdate(record._id)}>Update</div>
+                        <div className="bg-rose-800 text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => upToStatusDelete(record)}>Delete</div>
                     </Space>
                     <Space className="flex items-center w-full">
-                        <div className="bg-[#65a30d] text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => handleUpdate(record)}>Active</div>
-                        <div className="bg-[#94a3b8] text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => handleDelete(record)} >Inactive</div>
+                        <div className="bg-lime-700 text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => upToStatusActive(record)}>Active</div>
+                        <div className="bg-slate-400 text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => upToStatusInactive(record)} >Inactive</div>
                     </Space>
                 </div>
             ),
         },
     ];
 
-    const onSelectChange = (newSelectedRowKeys) => {
-        console.log('selectedRowKeys changed: ', newSelectedRowKeys);
-        setSelectedRowKeys(newSelectedRowKeys);
-    };
+    // const onSelectChange = (newSelectedRowKeys) => {
+    //     console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+    //     setSelectedRowKeys(newSelectedRowKeys);
+    // };
 
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-    };
+    // const rowSelection = {
+    //     selectedRowKeys,
+    //     onChange: onSelectChange,
+    // };
 
-    const handleUpdate = async(data) => {
-        console.log(data);
+    const handleReloadData = async() => {
+        await fetchAllUser();
+        Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Reload User Is Success!",
+            showConfirmButton: false,
+            timer: 1500
+        });
     }
 
-    const handleDelete = async(data) => {
-        console.log(data);
+    const navigationToNewUser = () => {
+        router.push('/dashboard/user/new');
+    }
+
+    const navigationToUpdate = (id) => {
+        router.push(`/dashboard/user/update/${id}`);
+    }
+
+    const upToStatusDelete = async(status) => {
+        
+    }
+
+    const upToStatusActive = async(status) => {
+        
+    }
+
+    const upToStatusInactive = async(status) => {
+        
     }
 
     return ( 
         <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
-                <Button onClick={fetchAllUser} className="bg-[#407dc0] font-semibold text-white w-1/12">Reload</Button>
+                <div className="flex gap-2 w-full">
+                    <Button onClick={handleReloadData} className="bg-[#407dc0] font-semibold text-white w-1/12">Reload</Button>
+                    <Button onClick={navigationToNewUser} className="bg-[#407dc0] font-semibold text-white w-1/12">New User</Button>
+                </div>
                 <div className="text-xl"><span className="font-semibold">Total User:</span>  {users.length}</div>
             </div>
-            <Table dataSource={users} columns={columns} rowKey="_id" scroll={{ x: 1500, y: 600 }} rowSelection={rowSelection}/>
+            <Table dataSource={users} columns={columns} rowKey="_id" scroll={{ x: 1500, y: 600 }} />
         </div>
     );
 }
