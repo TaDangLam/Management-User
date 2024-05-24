@@ -5,7 +5,11 @@ import { useState } from "react";
 import { AiOutlineLock, AiOutlineMail } from "react-icons/ai";
 import { FaRegUser, FaRegAddressCard } from "react-icons/fa";
 import { FiPhoneCall } from "react-icons/fi";
+import { MdOutlineToday } from "react-icons/md";
 import Swal from "sweetalert2";
+import { format } from 'date-fns';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import { Register } from "../api/route";
 
@@ -18,10 +22,13 @@ const Signup = () => {
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [sex, setSex] = useState('male');
-
+    const [dateOfBirth, setDateOfBirth] = useState(null);
+    
     const handleRegister = async(e) => {
         e.preventDefault();
         try{
+            const formatDate = format(new Date(dateOfBirth), 'yyyy-MM-dd');
+
             const bodyFormData = new FormData();
             bodyFormData.append('username', username);
             bodyFormData.append('fullname', fullname);
@@ -30,6 +37,7 @@ const Signup = () => {
             bodyFormData.append('email', email);
             bodyFormData.append('phone', phone);
             bodyFormData.append('sex', sex);
+            bodyFormData.append('dateOfBirth', formatDate);
 
             await Register(bodyFormData);
             const Toast = Swal.mixin({
@@ -70,10 +78,10 @@ const Signup = () => {
                     <Link href={'/'} className="flex items-center justify-center w-full h-1/3 hover:text-[#005AA7] hover:opacity-75 duration-300">If you have an account, Login</Link>
                 </div>
                 <form onSubmit={handleRegister} className="flex flex-col items-center justify-center w-full h-5/6 mt-5 pt-5">
-                    <div className="flex items-center justify-center gap-3 w-full h-4/6 ">
-                        <div className="flex flex-col items-end gap-2 h-full w-1/2 ">
+                    <div className="flex items-center justify-center gap-3 w-full h-4/6 px-10">
+                        <div className="flex flex-col items-end gap-2 h-full w-1/3">
 
-                            <label className="flex items-center gap-2 w-72 p-3 bg-slate-100">
+                            <label className="flex items-center gap-2 w-full h-1/3 p-3 bg-slate-100">
                                 <FaRegUser className="w-1/12"/>
                                 <input 
                                     type="text" 
@@ -84,7 +92,7 @@ const Signup = () => {
                                 />
                             </label>
 
-                            <label className="flex items-center gap-2 w-72 p-3 bg-slate-100 ">
+                            <label className="flex items-center gap-2 w-full h-1/3 p-3 bg-slate-100 ">
                                 <AiOutlineLock className="w-1/12"/>
                                 <input 
                                     type="password" 
@@ -95,7 +103,7 @@ const Signup = () => {
                                 />
                             </label>
 
-                            <label className="flex items-center gap-2 w-72 p-3 bg-slate-100 ">
+                            <label className="flex items-center gap-2 w-full h-1/3 p-3 bg-slate-100 ">
                                 <AiOutlineLock className="w-1/12"/>
                                 <input 
                                     type="password" 
@@ -106,9 +114,9 @@ const Signup = () => {
                                 />
                             </label>
                         </div>
-                        <div className="flex flex-col items-start gap-2 h-full w-1/2 ">
+                        <div className="flex flex-col items-start gap-2 h-full w-1/3 ">
 
-                            <label className="flex items-center gap-2 w-72 p-3 bg-slate-100">
+                            <label className="flex items-center gap-2 w-full h-1/3 p-3 bg-slate-100">
                                 <FaRegAddressCard className="w-1/12"/>
                                 <input 
                                     type="text" 
@@ -119,8 +127,8 @@ const Signup = () => {
                                 />
                             </label>
 
-                            <label className="flex items-center gap-2 w-72 p-3 bg-slate-100">
-                                <AiOutlineMail className="w-1/12"/>
+                            <label className="flex items-center gap-2 w-full h-1/3 p-3 bg-slate-100">
+                                <AiOutlineMail className="w-1/12 h-full"/>
                                 <input 
                                     type="text" 
                                     placeholder="Email" 
@@ -130,7 +138,7 @@ const Signup = () => {
                                 />
                             </label>
 
-                            <label className="flex items-center gap-2 w-72 p-3 bg-slate-100">
+                            <label className="flex items-center gap-2 w-full h-1/3 p-3 bg-slate-100">
                                 <FiPhoneCall className="w-1/12"/>
                                 <input 
                                     type="text" 
@@ -141,6 +149,18 @@ const Signup = () => {
                                 />
                             </label>
 
+                        </div>
+
+                        <div className="flex flex-col items-start gap-2 h-full w-1/3">
+                            <label className="flex items-center gap-2 w-full h-1/3 p-3 bg-slate-100">
+                                <MdOutlineToday  className="w-6 h-6"/>
+                                <DatePicker 
+                                    selected={dateOfBirth} 
+                                    onChange={(date) => setDateOfBirth(date)}
+                                    placeholderText="Select date of birth"
+                                    className="w-11/12 bg-slate-100 outline-none" 
+                                />
+                            </label>
                         </div>
                     </div>
                     <div className="flex gap-10 w-full h-1/6 items-center justify-center">

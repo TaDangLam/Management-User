@@ -2,8 +2,8 @@
 import { useEffect, useState, useRef } from "react";
 import { Button, Table, Input, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { format } from "date-fns";
 import Swal from "sweetalert2";
+import { format, differenceInYears } from "date-fns";
 
 import { getAllUser } from "@/app/api/route";
 import { useRouter } from "next/navigation";
@@ -23,6 +23,10 @@ const User = () => {
             setUsers(data);
         } catch (error) {
             console.log(error)
+            // Swal.fire({
+            //     icon: 'error',
+            //     text: `An error occurred with the server`,
+            // });
         }
     }
 
@@ -32,6 +36,14 @@ const User = () => {
 
     const formatDate = (dateString) => {
         return format(new Date(dateString), 'dd-MM-yyyy HH:mm:ss');
+    };
+
+    const formatDateOfBirth = (dateString) => {
+        return format(new Date(dateString), 'dd-MM-yyyy');
+    };
+
+    const calculateAge = (dateOfBirth) => {
+        return differenceInYears(new Date(), new Date(dateOfBirth));
     };
 
     const getStatusColor = (status) => {
@@ -134,6 +146,21 @@ const User = () => {
             ...getColumnSearchProps('fullname')
         },
         {
+            title: 'Date Of Birth',
+            dataIndex: 'dateOfBirth',
+            key: 'dateofbirth',
+            render: (text) => formatDateOfBirth(text),
+            width: 120
+        },
+        {
+            title: 'Age',
+            dataIndex: 'dateOfBirth',
+            key: 'dateofbirth',
+            render: (text) => calculateAge(text),
+            sorter: (a, b) => new Date(b.dateOfBirth) - new Date(a.dateOfBirth),
+            width: 70
+        },
+        {
             title: 'Username',
             dataIndex: 'username',
             key: 'username',
@@ -185,7 +212,7 @@ const User = () => {
             ],
             onFilter: (value, record) => record.accountStatus === value,
             render: (text) => (
-                <span className={`flex items-center justify-center w-16 px-2.5 py-1 rounded font-semibold text-white ${getStatusColor(text)}`}>
+                <span className={`flex items-center justify-center w-16 px-2.5 py-1 rounded-full cursor-pointer font-semibold text-white ${getStatusColor(text)}`}>
                     {text}
                 </span>
             ),
@@ -196,20 +223,23 @@ const User = () => {
             dataIndex: 'createdAt',
             key: 'createdAt',
             render: (text) => formatDate(text),
-            sorter: (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+            sorter: (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+            width: 120
         },
         {
             title: 'UpdatedAt',
             dataIndex: 'updatedAt',
             key: 'updatedAt',
             render: (text) => formatDate(text),
-            sorter: (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+            sorter: (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt),
+            width: 120
         },
         {
             title: 'Last Login',
             dataIndex: 'lastLogin',
             key: 'lastLogin',
             render: (text) => text ? formatDate(text) : '---------------',
+            width: 120
         },
         {
             title: 'Operation',
@@ -217,12 +247,12 @@ const User = () => {
             render: (text, record) => (
                 <div className="flex flex-col justify-center gap-2 w-full">
                     <Space className="flex items-center w-full">
-                        <div className="bg-[#4b6cb7] text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => navigationToUpdate(record._id)}>Update</div>
-                        <div className="bg-rose-800 text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => upToStatusDelete(record)}>Delete</div>
+                        <div className="bg-[#4b6cb7] text-white duration-300 px-2 py-1 w-15 rounded-full font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => navigationToUpdate(record._id)}>Update</div>
+                        <div className="bg-rose-800 text-white duration-300 px-2 py-1 w-15 rounded-full font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => upToStatusDelete(record)}>Delete</div>
                     </Space>
                     <Space className="flex items-center w-full">
-                        <div className="bg-lime-700 text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => upToStatusActive(record)}>Active</div>
-                        <div className="bg-slate-400 text-white duration-300 px-2 py-1 w-15 rounded font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => upToStatusInactive(record)} >Inactive</div>
+                        <div className="bg-lime-700 text-white duration-300 px-2 py-1 w-15 rounded-full font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => upToStatusActive(record)}>Active</div>
+                        <div className="bg-slate-400 text-white duration-300 px-2 py-1 w-15 rounded-full font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => upToStatusInactive(record)} >Inactive</div>
                     </Space>
                 </div>
             ),
@@ -279,7 +309,7 @@ const User = () => {
                 </div>
                 <div className="text-xl"><span className="font-semibold">Total User:</span>  {users.length}</div>
             </div>
-            <Table dataSource={users} columns={columns} rowKey="_id" scroll={{ x: 1500, y: 600 }} />
+            <Table dataSource={users} columns={columns} rowKey="_id" scroll={{ x: 1900, y: 600 }} />
         </div>
     );
 }
