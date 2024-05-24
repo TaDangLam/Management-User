@@ -12,7 +12,7 @@ const User = () => {
     const router = useRouter();
     const accessToken = sessionStorage.getItem('accessToken');
     const [users, setUsers] = useState([]);
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    // const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
@@ -159,7 +159,8 @@ const User = () => {
             title: 'Phone',
             dataIndex: 'phone',
             key: 'phone',
-            ...getColumnSearchProps('phone')
+            ...getColumnSearchProps('phone'),
+            width: 110
         },
         {
             title: 'Email',
@@ -171,6 +172,7 @@ const User = () => {
             title: 'Role',
             dataIndex: 'role',
             key: 'role',
+            width: 90
         },
         {
             title: 'AccountStatus',

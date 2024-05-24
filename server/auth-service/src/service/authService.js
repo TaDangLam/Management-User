@@ -5,7 +5,7 @@ import middlewareToken from './jwtService.js';
 
 const authService = {
     register: async(newUser) => {
-        const { username, fullname, password, confirmps, email, phone, sex } = newUser;
+        const { username, fullname, password, confirmps, email, phone, sex, dateOfBirth } = newUser;
         try {
             const checkUser = await Auth.findOne({ username });
             // console.log(checkUser)
@@ -20,7 +20,8 @@ const authService = {
                 password: hashed,
                 confirmps: hashed,
                 phone,
-                sex
+                sex,
+                dateOfBirth: new Date(dateOfBirth)
             });
             const user = await newUserDoc.save();
             return {
@@ -28,7 +29,7 @@ const authService = {
                 message: "CREATED",
                 data: user
             };
-        } catch (error) {
+        } catch (error) {   
             throw new Error(error.message);
         }
     },
@@ -138,7 +139,7 @@ const authService = {
     },
     updateUser: async(id, data) => {
         try {
-            const { username, fullname, password, confirmps, phone, email, accountStatus, avatar } = data;
+            const { username, fullname, password, confirmps, phone, email, accountStatus, avatar, dateOfBirth } = data;
             const checkUser = await Auth.findById(id);
             if(checkUser === null) {
                 throw new Error('User is not exist');
@@ -151,16 +152,17 @@ const authService = {
             if (phone) updateFields.phone = phone;
             if (password && confirmps) {
                 if (password !== confirmps) {
-                    throw new Error('Password and confirmPassword do not match');
+                    throw new Error('Password and Confirm Password do not match');
                 }
                 const hashedPassword = bcrypt.hashSync(password, 10);
                 updateFields.password = hashedPassword;
                 updateFields.confirmps = hashedPassword;
             }
+            if (dateOfBirth) updateFields.dateOfBirth = new Date(dateOfBirth);
+            
             if (filterImages.length > 0) {
                 updateFields.avatar = filterImages;
             }
-
             const updatedUser = await Auth.findByIdAndUpdate(id, updateFields, { new: true });
             return({
                 status: 'OK',

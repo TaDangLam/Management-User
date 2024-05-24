@@ -6,7 +6,7 @@ import middlewareToken from '../service/jwtService.js';
 const authController = {
     register: async(req, res) => {
         try {
-            const { username, fullname, password, confirmps, email, phone, sex } = req.body;
+            const { username, fullname, password, confirmps, email, phone, sex, dateOfBirth } = req.body;
             const regexMail = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
             const regexPhoneNumber = /^(\+84|84|0)(3|5|7|8|9|1[2|6|8|9])[0-9]{8}$/;
             const checkMail = regexMail.test(email);
@@ -26,6 +26,8 @@ const authController = {
                 return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please enter field Phone' });
             } else if (!sex) {
                 return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please select Sex' });
+            } else if (!dateOfBirth) {
+                return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please select birth' });
             } else if (!checkMail) {
                 return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Email is not valid' });
             } else if (!checkPhone) {
@@ -106,10 +108,16 @@ const authController = {
     updateUser: async(req, res) => {
         try {
             const { id } = req.params;
+            const { username, fullname, password, confirmps, phone, email, accountStatus, dateOfBirth } = req.body;
+            const data = { username, fullname, password, confirmps, phone, email, accountStatus, dateOfBirth }
+            
+            if (req.file) {
+                data.avatar = req.file.originalname;
+            }
             if(!id){
                 return res.status(StatusCodes.NOT_FOUND).json('The user is not required')
             }
-            const response = await authService.updateUser(id, req.body);
+            const response = await authService.updateUser(id, data);
             res.status(StatusCodes.OK).json(response);
         } catch (error) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });

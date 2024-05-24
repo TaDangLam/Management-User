@@ -13,6 +13,7 @@ const authSchema = new mongoose.Schema ({
     email: {type: String, required: true},
     role: {type: String, enum: authEnum, default: 'customer'},
     sex: {type: String, enum: sexEnum, default: 'male'},
+    dateOfBirth: { type: Date, required: true },
     avatar: {type: String},
     lastLogin: {type: Date},
     accountStatus: {type: String, enum: accountStatus, default: 'active'}
