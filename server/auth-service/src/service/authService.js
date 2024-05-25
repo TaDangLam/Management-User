@@ -188,7 +188,58 @@ const authService = {
         } catch (error) {
             throw new Error(error.message);
         }
-    },  
+    },
+    updateStatusToActive: async(id, data) => {
+        try {
+            const user = await Auth.findById(id);
+            if(!user) {
+                throw new Error('User is not found');
+            }
+            user.accountStatus = data;
+            const newAccountStatus = await user.save();
+            return({
+                status: 'OK',
+                message: 'Update Status is Successfully',
+                data: newAccountStatus
+            })
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+    updateStatusToInactive: async(id, data) => {
+        try {
+            const user = await Auth.findById(id);
+            if(!user) {
+                throw new Error('User is not found');
+            }
+            user.accountStatus = data;
+            const newAccountStatus = await user.save();
+            return({
+                status: 'OK',
+                message: 'Update Status is Successfully',
+                data: newAccountStatus
+            })
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+    updateStatusToDeleted: async(id, data) => {
+        try {
+            const user = await Auth.findById(id);
+            if(!user) {
+                throw new Error('User is not found');
+            }
+            user.accountStatus = data;
+            const newAccountStatus = await user.save();
+            return({
+                status: 'OK',
+                message: 'Update Status is Successfully',
+                data: newAccountStatus
+            })
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
 };
 
 export default authService;

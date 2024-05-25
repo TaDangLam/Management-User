@@ -115,6 +115,36 @@ const authController = {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
         }
     },
+    updateStatusToActive: async(req, res) => {
+        try {
+            const { id } = req.params;
+            const data = 'active';
+            const response = await authService.updateStatusToActive(id, data);
+            res.status(StatusCodes.OK).json(response);
+        } catch (error) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+        }
+    },
+    updateStatusToDeleted: async(req, res) => {
+        try {
+            const { id } = req.params;
+            const data = 'deleted';
+            const response = await authService.updateStatusToDeleted(id, data);
+            res.status(StatusCodes.OK).json(response);
+        } catch (error) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+        }
+    },
+    updateStatusToInactive: async(req, res) => {
+        try {
+            const { id } = req.params;
+            const data = 'inactive';
+            const response = await authService.updateStatusToInactive(id, data);
+            res.status(StatusCodes.OK).json(response);
+        } catch (error) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+        }
+    },
     forgotPassword: async(req, res) => {
         try {
             

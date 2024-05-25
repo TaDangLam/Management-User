@@ -82,6 +82,48 @@ export const Register = async(bodyFormData) => {
     }
 }
 
+export const updateStatusToActive = async(id, accessToken) => {
+    try {
+        const response = await axios.patch(`${url}/auth-service/update-status-to-active/${id}`, null, {
+            headers: {
+                authorization: `Bearer ${accessToken}`
+            }
+        });
+        return response.data.data;
+    } catch (error) {
+        console.log('Update Status To Active Router Error: ', error);
+        throw error;
+    }
+}
+
+export const updateStatusToInactive = async(id, accessToken) => {
+    try {
+        const response = await axios.patch(`${url}/auth-service/update-status-to-inactive/${id}`, null, {
+            headers: {
+                authorization: `Bearer ${accessToken}`
+            }
+        });
+        return response.data.data;
+    } catch (error) {
+        console.log('Update Status To Inactive Router Error: ', error);
+        throw error;
+    }
+}
+
+export const updateStatusToDeleted = async(id, accessToken) => {
+    try {
+        const response = await axios.patch(`${url}/auth-service/update-status-to-deleted/${id}`, null, {
+            headers: {
+                authorization: `Bearer ${accessToken}`
+            }
+        });
+        return response.data.data;
+    } catch (error) {
+        console.log('Update Status To Deleted Router Error: ', error);
+        throw error;
+    }
+}
+
 export const Logout = (dispatch) => {
     dispatch(logout());
 }

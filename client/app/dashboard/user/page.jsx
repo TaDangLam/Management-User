@@ -1,12 +1,13 @@
 'use client'
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Button, Table, Input, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import Swal from "sweetalert2";
 import { format, differenceInYears } from "date-fns";
+import { BsCake } from "react-icons/bs";
+import Swal from "sweetalert2";
 
-import { getAllUser } from "@/app/api/route";
-import { useRouter } from "next/navigation";
+import { getAllUser, updateStatusToActive, updateStatusToDeleted, updateStatusToInactive } from "@/app/api/route";
 
 const User = () => {
     const router = useRouter();
@@ -252,11 +253,11 @@ const User = () => {
                 <div className="flex flex-col justify-center gap-2 w-full">
                     <Space className="flex items-center w-full">
                         <div className="bg-[#4b6cb7] text-white duration-300 px-2 py-1 w-15 rounded-full font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => navigationToUpdate(record._id)}>Update</div>
-                        <div className="bg-rose-800 text-white duration-300 px-2 py-1 w-15 rounded-full font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => upToStatusDelete(record)}>Delete</div>
+                        <div className="bg-rose-800 text-white duration-300 px-2 py-1 w-15 rounded-full font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => updateToStatusDeleteUser(record._id, accessToken)}>Delete</div>
                     </Space>
                     <Space className="flex items-center w-full">
-                        <div className="bg-lime-700 text-white duration-300 px-2 py-1 w-15 rounded-full font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => upToStatusActive(record)}>Active</div>
-                        <div className="bg-slate-400 text-white duration-300 px-2 py-1 w-15 rounded-full font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => upToStatusInactive(record)} >Inactive</div>
+                        <div className="bg-lime-700 text-white duration-300 px-2 py-1 w-15 rounded-full font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => updateToStatusActiveUser(record._id, accessToken)}>Active</div>
+                        <div className="bg-slate-400 text-white duration-300 px-2 py-1 w-15 rounded-full font-semibold flex items-center justify-center w-16 cursor-pointer hover:opacity-70" onClick={() => updateToStatusInactiveUser(record._id, accessToken)} >Inactive</div>
                     </Space>
                 </div>
             ),
@@ -293,16 +294,88 @@ const User = () => {
         router.push(`/dashboard/user/update/${id}`);
     }
 
-    const upToStatusDelete = async(status) => {
-        
+    const updateToStatusDeleteUser = async(id, accessToken) => {
+        Swal.fire({
+            title: "Are you Accept Status To Deleted?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#4b6cb7",
+            cancelButtonColor: "#9f1239",
+            confirmButtonText: "Yes"
+            }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await updateStatusToDeleted(id, accessToken);
+                    Swal.fire({
+                        title: "Success!",
+                        icon: "success"
+                    });
+                } catch (error) {
+                    console.log(error)
+                    Swal.fire({
+                        title: "Error!",
+                        text: `${error}`,
+                        icon: "error"
+                    });
+                }
+            }
+        });    
     }
 
-    const upToStatusActive = async(status) => {
-        
+    const updateToStatusActiveUser = async(id, accessToken) => {
+        Swal.fire({
+            title: "Are you Accept Status To Active?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#4b6cb7",
+            cancelButtonColor: "#9f1239",
+            confirmButtonText: "Yes"
+            }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await updateStatusToActive(id, accessToken);
+                    Swal.fire({
+                        title: "Success!",
+                        icon: "success"
+                    });
+                } catch (error) {
+                    console.log(error)
+                    Swal.fire({
+                        title: "Error!",
+                        text: `${error}`,
+                        icon: "error"
+                    });
+                }
+            }
+        });    
     }
 
-    const upToStatusInactive = async(status) => {
-        
+    const updateToStatusInactiveUser = async(id, accessToken) => {
+        Swal.fire({
+            title: "Are you Accept Status To Inactive?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#4b6cb7",
+            cancelButtonColor: "#9f1239",
+            confirmButtonText: "Yes"
+            }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await updateStatusToInactive(id, accessToken);
+                    Swal.fire({
+                        title: "Success!",
+                        icon: "success"
+                    });
+                } catch (error) {
+                    console.log(error)
+                    Swal.fire({
+                        title: "Error!",
+                        text: `${error}`,
+                        icon: "error"
+                    });
+                }
+            }
+        });    
     }
 
     return ( 
