@@ -14,7 +14,7 @@ const UpdateUser = () => {
     const router = useRouter();
     const { id } = useParams();
     const accessToken = sessionStorage.getItem('accessToken');
-    const [username, setUserName] = useState('');
+    const [initialValues, setInitialValues] = useState({});
     const [fullname, setFullName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmps, setConfirmps] = useState('');
@@ -27,8 +27,8 @@ const UpdateUser = () => {
     const fetchDetailUser = async(id) => {
         try {
             const response = await getDetailUser(id, accessToken);
+            setInitialValues(response);
             setFullName(response.fullname);
-            setUserName(response.username);
             setPassword(response.password);
             setConfirmps(response.confirmps);
             setEmail(response.email);
@@ -39,7 +39,8 @@ const UpdateUser = () => {
             console.log('Error fetch user detail: ', error);
         }
     }
-
+    
+    // console.log(dateOfBirth)
     useEffect(() => {
         fetchDetailUser(id)
     }, [id])
@@ -47,19 +48,17 @@ const UpdateUser = () => {
     const handleUpdate = async(e) => {
         e.preventDefault();
         try{
-            const formatDate = format(new Date(dateOfBirth), 'yyyy-MM-dd');
-
+            const formatDate = dateOfBirth ? format(new Date(dateOfBirth), 'yyyy-MM-dd') : null;
             const bodyFormData = new FormData();
-            bodyFormData.append('username', username);
-            bodyFormData.append('fullname', fullname);
-            bodyFormData.append('password', password);
-            bodyFormData.append('confirmps', confirmps);
-            bodyFormData.append('email', email);
-            bodyFormData.append('phone', phone);
-            bodyFormData.append('sex', sex);
-            bodyFormData.append('dateOfBirth', formatDate);
-
-            await updateUser(bodyFormData);
+            if (fullname !== initialValues.fullname) bodyFormData.append('fullname', fullname);
+            if (email !== initialValues.email) bodyFormData.append('email', email);
+            if (phone !== initialValues.phone) bodyFormData.append('phone', phone);
+            if (sex !== initialValues.sex) bodyFormData.append('sex', sex);
+            if (formatDate) bodyFormData.append('dateOfBirth', formatDate);
+            if (password !== initialValues.password) bodyFormData.append('password', password);
+            if (confirmps !== initialValues.confirmps) bodyFormData.append('confirmps', confirmps);
+            
+            await updateUser(id, bodyFormData, accessToken);
             const Toast = Swal.mixin({
                 toast: true,
                 position: "top-end",
@@ -131,20 +130,6 @@ const UpdateUser = () => {
                         </select>
                     </div>
             
-                    <div className=" flex flex-col w-full h-1/6">
-                        <label className="text-[#4b6cb7] font-semibold" >
-                            User Name
-                        </label>
-                        <input
-                            id="username"
-                            type="text"
-                            placeholder="Please enter user name...."
-                            className="p-1.5 rounded-lg"
-                            value={username}
-                            onChange={(e) => setUserName(e.target.value)}
-                        >
-                        </input>
-                    </div>
 
                     <div className=" flex flex-col w-full h-1/6">
                         <label className="text-[#4b6cb7] font-semibold">

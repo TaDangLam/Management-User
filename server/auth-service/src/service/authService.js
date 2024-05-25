@@ -139,7 +139,7 @@ const authService = {
     },
     updateUser: async(id, data) => {
         try {
-            const { username, fullname, password, confirmps, phone, email, accountStatus, avatar, dateOfBirth } = data;
+            const { username, fullname, password, confirmps, phone, email, accountStatus, avatar, sex, dateOfBirth } = data;
             const checkUser = await Auth.findById(id);
             if(checkUser === null) {
                 throw new Error('User is not exist');
@@ -158,6 +158,7 @@ const authService = {
                 updateFields.password = hashedPassword;
                 updateFields.confirmps = hashedPassword;
             }
+            if (sex) updateFields.sex = sex;
             if (dateOfBirth) updateFields.dateOfBirth = new Date(dateOfBirth);
             
             if (filterImages.length > 0) {

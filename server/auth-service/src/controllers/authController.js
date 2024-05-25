@@ -73,14 +73,6 @@ const authController = {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
         }
     },
-    addUser: async(req, res) => {
-        try {
-            const response = await authService.addUser();
-            res.status(StatusCodes.CREATED).json(response);
-        } catch (error) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
-        }
-    },
     deleteUser: async(req, res) => {
         try {
             const { id } = req.params;
@@ -108,8 +100,8 @@ const authController = {
     updateUser: async(req, res) => {
         try {
             const { id } = req.params;
-            const { username, fullname, password, confirmps, phone, email, accountStatus, dateOfBirth } = req.body;
-            const data = { username, fullname, password, confirmps, phone, email, accountStatus, dateOfBirth }
+            const { username, fullname, password, confirmps, phone, email, accountStatus, sex, dateOfBirth } = req.body;
+            const data = { username, fullname, password, confirmps, phone, email, accountStatus, sex, dateOfBirth }
             
             if (req.file) {
                 data.avatar = req.file.originalname;

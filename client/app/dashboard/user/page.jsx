@@ -137,20 +137,22 @@ const User = () => {
             title: 'ID',
             dataIndex: '_id',
             key: '_id',
-            ...getColumnSearchProps('_id')
+            ...getColumnSearchProps('_id'),
+            width: 110
         },
         {
             title: 'Fullname',
             dataIndex: 'fullname',
             key: 'fullname',
-            ...getColumnSearchProps('fullname')
+            ...getColumnSearchProps('fullname'),
+            width: 130
         },
         {
             title: 'Date Of Birth',
             dataIndex: 'dateOfBirth',
             key: 'dateofbirth',
             render: (text) => formatDateOfBirth(text),
-            width: 120
+            width: 100
         },
         {
             title: 'Age',
@@ -164,7 +166,8 @@ const User = () => {
             title: 'Username',
             dataIndex: 'username',
             key: 'username',
-            ...getColumnSearchProps('username')
+            ...getColumnSearchProps('username'),
+            width: 110
         },
         {
             title: 'Sex',
@@ -187,19 +190,7 @@ const User = () => {
             dataIndex: 'phone',
             key: 'phone',
             ...getColumnSearchProps('phone'),
-            width: 110
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-            ...getColumnSearchProps('email')
-        },
-        {
-            title: 'Role',
-            dataIndex: 'role',
-            key: 'role',
-            width: 90
+            width: 100
         },
         {
             title: 'AccountStatus',
@@ -216,7 +207,20 @@ const User = () => {
                     {text}
                 </span>
             ),
-            width: 140
+            width: 120
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+            ...getColumnSearchProps('email'),
+            width: 150
+        },
+        {
+            title: 'Role',
+            dataIndex: 'role',
+            key: 'role',
+            width: 80
         },
         {
             title: 'CreatedAt',
@@ -256,6 +260,7 @@ const User = () => {
                     </Space>
                 </div>
             ),
+            width: 150
         },
     ];
 

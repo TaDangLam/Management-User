@@ -6,7 +6,6 @@ import authMiddleWare from '../middleware/authMiddleware.js'
 import upload from '../configs/multerConfig.js';
 
 Router.get('/get-all-user', authMiddleWare.verifyTokenAdmin, authController.getAllUser);
-Router.post('/add-user', authMiddleWare.verifyTokenAdmin, authController.addUser);
 Router.post('/register', upload, authController.register);
 Router.post('/login', upload, authController.loginUser);
 Router.delete('/delete-user/:id', authMiddleWare.verifyTokenAdmin, authController.deleteUser);

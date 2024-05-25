@@ -75,7 +75,7 @@ const NewUser = () => {
         ) : (
             <div className="flex flex-col gap-2">
                 <div className="flex item-center gap-4">
-                    <Link href={'/dashboard/user'} className="text-[#4b6cb7] text-3xl mb-5 font-bold hover:opacity-70 duration-300">User</Link>
+                    <Link href={'/dashboard/user'} className="text-[#4b6cb7] text-3xl mb-5 font-bold hover:opacity-60 duration-300">User</Link>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="flex item-center justify-center w-6 h-9">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
                     </svg>

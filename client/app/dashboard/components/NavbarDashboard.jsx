@@ -18,7 +18,7 @@ const NavbarDashboard = () => {
         await Logout(dispatch);
         router.push('/')
     }
-    console.log(user)
+    // console.log(user)
     return (
         <div className="text-white p-4 pr-0 flex flex-col gap-4 ">
             <div className="flex flex-col gap-3 font-bold justify-center items-center">
