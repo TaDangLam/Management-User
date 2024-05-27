@@ -1,12 +1,13 @@
 'use client'
 import Link from "next/link";
 import { usePathname } from 'next/navigation'
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Logout } from "@/app/api/route";
 import { useRouter } from "next/navigation";
 
 const NavbarDashboard = () => {
+    // const user = useSelector(state => state.auth.user);
     const user = JSON.parse(sessionStorage.getItem('user'));
     const dispatch = useDispatch();
     const router = useRouter();
@@ -15,21 +16,21 @@ const NavbarDashboard = () => {
     const active = inactiveLink + ' bg-slate-100 text-blue-900 rounded-l-pd';
     
     const handleLogout = async() => {
-        await Logout(dispatch);
         router.push('/')
+        Logout(dispatch);
     }
-    // console.log(user)
+
     return (
         <div className="text-white p-4 pr-0 flex flex-col gap-4 ">
             <div className="flex flex-col gap-3 font-bold justify-center items-center">
-                <Link href={'/dashboard/profiledashboard'} className="bg-blue-200 w-2/6 rounded-full">
-                    {user.avatar ? (
+                <Link href={`/dashboard/profiledashboard`} className="bg-blue-200 w-2/6 rounded-full">
+                    { (user && user.avatar) ? (
                         <img
                             src={`${process.env.NEXT_PUBLIC_API_IMAGES}/${user._id}/${user.avatar}`}
                             alt="avatar"
                             className="w-full h-full rounded-full object-cover"
                         />
-                    ) : user.sex === 'male' ? (
+                    ) : (user && user.sex === 'male') ? (
                         <img
                             src='/images.png'
                             alt="avatar"
@@ -44,8 +45,8 @@ const NavbarDashboard = () => {
                     ) }
                 </Link>
                 <div className="flex flex-col items-center justify-center">
-                    <div>{user.fullname}</div>
-                    <div className=" font-normal">{user.email}</div>
+                    <div>{user?.fullname}</div>
+                    <div className=" font-normal">{user?.email}</div>
                 </div>
             </div>
                 

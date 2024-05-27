@@ -102,13 +102,9 @@ const authController = {
             const { id } = req.params;
             const { username, fullname, password, confirmps, phone, email, accountStatus, sex, dateOfBirth } = req.body;
             const data = { username, fullname, password, confirmps, phone, email, accountStatus, sex, dateOfBirth }
-            
-            if (req.file) {
-                data.avatar = req.file.originalname;
-            }
-            if(!id){
-                return res.status(StatusCodes.NOT_FOUND).json('The user is not required')
-            }
+            if (req.file) data.avatar = req.file.originalname;
+            if(!id) return res.status(StatusCodes.NOT_FOUND).json('The user is not required');
+
             const response = await authService.updateUser(id, data);
             res.status(StatusCodes.OK).json(response);
         } catch (error) {

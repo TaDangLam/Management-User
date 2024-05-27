@@ -28,21 +28,11 @@ export const authSlice = createSlice({
             state.refreshToken = null;
             sessionStorage.clear();
         },
-        // addNewAddress: (state, action) => {
-        //     state.user.address.push(action.payload);
-        // },
-        // updateAddress: (state, action) => {
-        //     const index = state.user.address.findIndex(addr => addr._id === action.payload._id);
-        //     if(index !== -1){
-        //         state.user.address[index] = action.payload;
-        //     }
-        // },
-        // deleteAddress: (state, action) => {
-        //     state.user.address = state.user.address.filter(addr => addr._id !== action.payload);
-        // }
-
+        UpdateUser: (state, action) => {
+            state.user = action.payload
+        },
     }
 })
 
-export const { login, logout, register, Updateuser } = authSlice.actions;
+export const { login, logout, register, UpdateUser } = authSlice.actions;
 export default authSlice.reducer;

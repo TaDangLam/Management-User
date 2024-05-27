@@ -14,6 +14,7 @@ import { getAllUser } from "../api/route";
 const Dashboard = () => {
     const accessToken = sessionStorage.getItem('accessToken');
     const [users, setUsers] = useState([]);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
     const fetchAllUser = async (accessToken) => {
         try {
@@ -28,12 +29,20 @@ const Dashboard = () => {
         fetchAllUser(accessToken);
     }, [accessToken]);
 
+    const handleYearChange = (event) => {
+        setSelectedYear(parseInt(event.target.value));
+    };
+
+
     // Xử lý dữ liệu cho biểu đồ Line (số lượng người đăng ký theo tháng)
     const processLineChartData = () => {
         const months = Array(12).fill(0);
         users.forEach(user => {
-            const month = new Date(user.createdAt).getMonth();
-            months[month]++;
+            const userDate = new Date(user.createdAt);
+            if (userDate.getFullYear() === selectedYear) {
+                const month = userDate.getMonth();
+                months[month]++;
+            }
         });
         return {
             labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -169,12 +178,12 @@ const Dashboard = () => {
                             <label htmlFor="yearSelect" className="text-xl font-semibold">Select Year:</label>
                             <select
                                 id="yearSelect"
-                                // value={selectedYear}
-                                // onChange={handleYearChange}
+                                value={selectedYear}
+                                onChange={handleYearChange}
                                 className="p-2 border rounded-md"
                             >
-                                {[...Array(new Date().getFullYear() - 2021).keys()].map((year) => (
-                                    <option key={2022 + year} value={2022 + year}>{2022 + year}</option>
+                                {[...Array(new Date().getFullYear() - 2020).keys()].map((year) => (
+                                    <option key={2021 + year} value={2021 + year}>{2021 + year}</option>
                                 ))}
                             </select>
                         </div>
