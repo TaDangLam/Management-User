@@ -1,7 +1,6 @@
 'use client'
 import { Inter } from "next/font/google";
 import { useRouter } from 'next/navigation'
-import { useEffect } from "react";
 
 import "./globals.css";
 import StoreProvider from "./StoreProvider";

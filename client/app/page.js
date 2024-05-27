@@ -67,7 +67,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen ">
+    <div className="bg-gradient-to-b from-[#4b6cb7] to-[#1CB5E0] flex items-center justify-center h-screen ">
         <div className="flex flex-col bg-slate-200 h-3/6 w-3/6 shadow-2xl rounded-[25px]">
             <div className="flex flex-col w-full h-5/6 rounded-t-[25px] p-5">
                 <div className="flex text-5xl font-bold items-center justify-center text-[#005AA7]">Login</div>

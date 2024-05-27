@@ -70,7 +70,7 @@ const Signup = () => {
     };
 
     return ( 
-        <div className="flex items-center justify-center h-screen ">
+        <div className="bg-gradient-to-b from-[#4b6cb7] to-[#1CB5E0] flex items-center justify-center h-screen ">
             <div className="flex flex-col bg-slate-200 h-2/4 w-1/2 shadow-2xl rounded-[25px] pt-6 pb-2">
                 <div className="flex flex-col items-center justify-center w-full h-1/6 gap-3 pt-2">
                     <div className="flex text-5xl font-bold items-center justify-center text-[#005AA7] w-full h-1/3">Sign Up</div>
