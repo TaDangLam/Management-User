@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Table, Input, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { format, differenceInYears } from "date-fns";
+import { format, differenceInYears, differenceInDays  } from "date-fns";
 import { BsCake } from "react-icons/bs";
 import Swal from "sweetalert2";
 
@@ -101,7 +101,7 @@ const User = () => {
         filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         onFilter: (value, record) =>
             record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-        onFilterDropdownVisibleChange: visible => {
+        onFilterDropdownOpenChange: visible => {
             if (visible) {
                 setTimeout(() => searchInput.current.select(), 100);
             }
@@ -145,6 +145,14 @@ const User = () => {
             title: 'Fullname',
             dataIndex: 'fullname',
             key: 'fullname',
+            render: (text, record) => {
+                const isInactive = differenceInDays(new Date(), new Date(record.lastLogin)) > 14 && record.accountStatus !== 'deleted';
+                return (
+                    <span style={{ color: isInactive ? 'red' : 'black' }}>
+                        {text}
+                    </span>
+                );
+            },
             ...getColumnSearchProps('fullname'),
             width: 130
         },
@@ -277,13 +285,30 @@ const User = () => {
 
     const handleReloadData = async() => {
         await fetchAllUser();
-        Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Reload User Is Success!",
+        const inactiveUsers = users.filter(user => differenceInDays(new Date(), new Date(user.lastLogin)) > 14 && user.accountStatus !== 'deleted');
+        
+        for (const user of inactiveUsers) {
+            try {
+                await updateStatusToInactive(user._id, accessToken);
+            } catch (error) {
+                console.log('Update Status Inactive User Failed!')
+            }
+        }
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
             showConfirmButton: false,
-            timer: 1500
-        });
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            icon: "success",
+            title: "Reload User is Successfully"
+          });
     }
 
     const navigationToNewUser = () => {

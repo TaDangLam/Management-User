@@ -46,6 +46,8 @@ const authService = {
                     throw new Error('Password is not incorrect');
                 }
                 
+                // Cập nhật trạng thái tài khoản
+                checkUser.accountStatus = 'active';
                 // Lưu đăng nhập
                 checkUser.lastLogin = new Date();
                 await checkUser.save();

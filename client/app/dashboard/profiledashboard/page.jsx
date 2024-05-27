@@ -18,18 +18,18 @@ const ProfileAdmin = () => {
     // const user = useSelector(state => state.auth.user);
     const user = JSON.parse(sessionStorage.getItem('user'));
     const [initialValues, setInitialValues] = useState(user);
-    const [fullname, setFullName] = useState(user.fullname);
+    const [fullname, setFullName] = useState(user?.fullname);
     const [password, setPassword] = useState('');
     const [confirmps, setConfirmps] = useState('');
-    const [email, setEmail] = useState(user.email);
-    const [phone, setPhone] = useState(user.phone);
-    const [sex, setSex] = useState(user.sex);
-    const [dateOfBirth, setDateOfBirth] = useState(user.dateOfBirth);
-    const [images, setImages] = useState(user.avatar);
+    const [email, setEmail] = useState(user?.email);
+    const [phone, setPhone] = useState(user?.phone);
+    const [sex, setSex] = useState(user?.sex);
+    const [dateOfBirth, setDateOfBirth] = useState(user?.dateOfBirth);
+    const [images, setImages] = useState(user?.avatar);
     const [imagePreview, setImagePreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const [hovered, setHovered] = useState(false);
-    console.log(initialValues)
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
