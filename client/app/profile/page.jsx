@@ -185,7 +185,7 @@ const Profile = () => {
                             >
                                 <img
                                     src={imagePreview}
-                                    alt="Image Preview"
+                                    alt="No Images"
                                     className="w-32 h-32 rounded-lg object-cover"
                                 />
                                 {hovered && (

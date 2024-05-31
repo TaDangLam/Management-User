@@ -29,8 +29,8 @@ const UpdateUser = () => {
             const response = await getDetailUser(id, accessToken);
             setInitialValues(response);
             setFullName(response.fullname);
-            setPassword(response.password);
-            setConfirmps(response.confirmps);
+            // setPassword(response.password);
+            // setConfirmps(response.confirmps);
             setEmail(response.email);
             setPhone(response.phone);
             setSex(response.sex);
@@ -138,7 +138,7 @@ const UpdateUser = () => {
                         <input
                             id="password"
                             type="password"
-                            placeholder="Please enter password...."
+                            placeholder="***************"
                             className="p-1.5 rounded-lg"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -153,7 +153,7 @@ const UpdateUser = () => {
                         <input
                             id="confirmpassword"
                             type="password"
-                            placeholder="Please enter confirm password...."
+                            placeholder="***************"
                             className="p-1.5 rounded-lg"
                             value={confirmps}
                             onChange={(e) => setConfirmps(e.target.value)}
