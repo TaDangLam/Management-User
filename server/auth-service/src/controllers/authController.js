@@ -49,9 +49,9 @@ const authController = {
             }
             const response = await authService.login(req.body);
             res.status(StatusCodes.ACCEPTED).json(response);
-         } catch (error) {
+        } catch (error) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
-         }
+        }
     },
     refreshToken: async(req, res) => {
         try {
@@ -61,6 +61,30 @@ const authController = {
             }
             const response = await middlewareToken.refreshTokenService(token);
             return res.status(StatusCodes.OK).json(response);
+        } catch (error) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+        }
+    },
+    addMultiUser: async(req, res) => {
+        try {
+            const { users } = req.body;
+            if (!Array.isArray(users) || users.length === 0) {
+                return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please provide an array of users' });
+            }
+            const response = await authService.addMultiUser(users);
+            res.status(StatusCodes.CREATED).json(response);
+        } catch (error) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+        }
+    },
+    deleteMultiUser: async (req, res) => {
+        try {
+            const { ids } = req.body;
+            if (!Array.isArray(ids) || ids.length === 0) {
+                return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Please provide an array of user ids' });
+            }
+            const response = await authService.deleteMultiUser(ids);
+            res.status(StatusCodes.OK).json(response);
         } catch (error) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
         }

@@ -124,6 +124,21 @@ export const updateStatusToDeleted = async(id, accessToken) => {
     }
 }
 
+export const RegisterMultiple = async (formData, accessToken) => {
+    try {
+        const response = await axios.post(`${url}/auth-service/add-multi-user`, formData, {
+            headers: {
+                authorization: `Bearer ${accessToken}`,
+            }
+        });
+        return response.data.data;
+    } catch (error) {
+        console.log('Register Multiple Users Router Error: ', error);
+        throw error;
+    }
+};
+
+
 export const Logout = (dispatch) => {
     dispatch(logout());
 }

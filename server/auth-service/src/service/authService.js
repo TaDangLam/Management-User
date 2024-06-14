@@ -33,6 +33,58 @@ const authService = {
             throw new Error(error.message);
         }
     },
+    addMultiUser: async(users) => {
+        try {
+            const newUsersData = users.map(async (user) => {
+                const { username, fullname, password, email, phone, sex, dateOfBirth } = user;
+                const checkUser = await Auth.findOne({ username });
+                if (checkUser) {
+                    throw new Error(`User ${username} already exists`);
+                }
+                const hashedPassword = bcrypt.hashSync(password, 10);
+                const newUser = new Auth({
+                    username,
+                    fullname,
+                    email,
+                    password: hashedPassword,
+                    confirmps: hashedPassword,
+                    phone,
+                    sex,
+                    dateOfBirth: new Date(dateOfBirth)
+                });
+                return newUser.save();
+            });
+    
+            const newUsers = await Promise.all(newUsersData);
+            return {
+                status: "OK",
+                message: "Create more users created successfully",
+                data: newUsers,
+            };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+    deleteMultiUser: async (ids) => {
+        try {
+            const deletedUsers = [];
+            for (let id of ids) {
+                const user = await Auth.findById(id);
+                if (!user) {
+                    throw new Error(`User with ID: ${id} not found`);
+                }
+                user.accountStatus = 'deleted';
+                await user.save();
+                deletedUsers.push(user);
+            }
+            return {
+                status: "OK",
+                message: "Deleted more users is successfully",
+            };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
     login: async(user) => {
         const { username, password } = user;
             try {

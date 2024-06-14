@@ -3,37 +3,42 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Table, Input, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { format, differenceInYears, differenceInDays  } from "date-fns";
+import { format, differenceInYears, differenceInDays } from "date-fns";
 import { BsCake } from "react-icons/bs";
 import Swal from "sweetalert2";
-
 import { getAllUser, updateStatusToActive, updateStatusToDeleted, updateStatusToInactive } from "@/app/api/route";
 
 const User = () => {
     const router = useRouter();
     const accessToken = sessionStorage.getItem('accessToken');
     const [users, setUsers] = useState([]);
-    // const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
-    
-    const fetchAllUser = async() => {
+
+    const fetchAllUser = async () => {
         try {
             const data = await getAllUser(accessToken);
             setUsers(data);
         } catch (error) {
-            console.log(error)
-            // Swal.fire({
-            //     icon: 'error',
-            //     text: `An error occurred with the server`,
-            // });
+            console.log(error);
         }
     }
 
     useEffect(() => {
         fetchAllUser();
     }, []);
+
+    const onSelectChange = (newSelectedRowKeys) => {
+        setSelectedRowKeys(newSelectedRowKeys);
+    };
+    
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+    };
+    
 
     const formatDate = (dateString) => {
         return format(new Date(dateString), 'dd-MM-yyyy HH:mm:ss');
@@ -273,20 +278,10 @@ const User = () => {
         },
     ];
 
-    // const onSelectChange = (newSelectedRowKeys) => {
-    //     console.log('selectedRowKeys changed: ', newSelectedRowKeys);
-    //     setSelectedRowKeys(newSelectedRowKeys);
-    // };
-
-    // const rowSelection = {
-    //     selectedRowKeys,
-    //     onChange: onSelectChange,
-    // };
-
-    const handleReloadData = async() => {
+    const handleReloadData = async () => {
         await fetchAllUser();
         const inactiveUsers = users.filter(user => differenceInDays(new Date(), new Date(user.lastLogin)) > 14 && user.accountStatus !== 'deleted');
-        
+
         for (const user of inactiveUsers) {
             try {
                 await updateStatusToInactive(user._id, accessToken);
@@ -301,25 +296,29 @@ const User = () => {
             timer: 3000,
             timerProgressBar: true,
             didOpen: (toast) => {
-              toast.onmouseenter = Swal.stopTimer;
-              toast.onmouseleave = Swal.resumeTimer;
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
             }
-          });
-          Toast.fire({
+        });
+        Toast.fire({
             icon: "success",
             title: "Reload User is Successfully"
-          });
+        });
     }
 
     const navigationToNewUser = () => {
         router.push('/dashboard/user/new');
     }
 
+    const navigationToNewMoreUser = () => {
+        router.push('/dashboard/user/more');
+    }
+
     const navigationToUpdate = (id) => {
         router.push(`/dashboard/user/update/${id}`);
     }
 
-    const updateToStatusDeleteUser = async(id, accessToken) => {
+    const updateToStatusDeleteUser = async (id, accessToken) => {
         Swal.fire({
             title: "Are you Accept Status To Deleted?",
             icon: "warning",
@@ -327,7 +326,7 @@ const User = () => {
             confirmButtonColor: "#4b6cb7",
             cancelButtonColor: "#9f1239",
             confirmButtonText: "Yes"
-            }).then(async (result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
                     await updateStatusToDeleted(id, accessToken);
@@ -344,10 +343,10 @@ const User = () => {
                     });
                 }
             }
-        });    
+        });
     }
 
-    const updateToStatusActiveUser = async(id, accessToken) => {
+    const updateToStatusActiveUser = async (id, accessToken) => {
         Swal.fire({
             title: "Are you Accept Status To Active?",
             icon: "warning",
@@ -355,7 +354,7 @@ const User = () => {
             confirmButtonColor: "#4b6cb7",
             cancelButtonColor: "#9f1239",
             confirmButtonText: "Yes"
-            }).then(async (result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
                     await updateStatusToActive(id, accessToken);
@@ -372,10 +371,10 @@ const User = () => {
                     });
                 }
             }
-        });    
+        });
     }
 
-    const updateToStatusInactiveUser = async(id, accessToken) => {
+    const updateToStatusInactiveUser = async (id, accessToken) => {
         Swal.fire({
             title: "Are you Accept Status To Inactive?",
             icon: "warning",
@@ -383,7 +382,7 @@ const User = () => {
             confirmButtonColor: "#4b6cb7",
             cancelButtonColor: "#9f1239",
             confirmButtonText: "Yes"
-            }).then(async (result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
                     await updateStatusToInactive(id, accessToken);
@@ -400,19 +399,138 @@ const User = () => {
                     });
                 }
             }
-        });    
+        });
     }
 
-    return ( 
+    const deleteMultipleUsers = async () => {
+        Swal.fire({
+            title: "Are you sure you want to delete selected users?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#4b6cb7",
+            cancelButtonColor: "#9f1239",
+            confirmButtonText: "Yes, delete them!"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    for (const id of selectedRowKeys) {
+                        await updateStatusToDeleted(id, accessToken);
+                    }
+                    Swal.fire({
+                        title: "Success!",
+                        text: "Selected users have been deleted.",
+                        icon: "success"
+                    });
+                    // Reload the user list after deletion
+                    fetchAllUser();
+                    // Clear the selected keys
+                    setSelectedRowKeys([]);
+                } catch (error) {
+                    console.log(error);
+                    Swal.fire({
+                        title: "Error!",
+                        text: `${error}`,
+                        icon: "error"
+                    });
+                }
+            }
+        });
+    }
+
+    const ActiveMultipleUsers = async () => {
+        Swal.fire({
+            title: "Are you sure you want to Active selected users?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#4b6cb7",
+            cancelButtonColor: "#9f1239",
+            confirmButtonText: "Yes, delete them!"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    for (const id of selectedRowKeys) {
+                        await updateStatusToActive(id, accessToken);
+                    }
+                    Swal.fire({
+                        title: "Success!",
+                        text: "Selected users have been deleted.",
+                        icon: "success"
+                    });
+                    // Reload the user list after deletion
+                    fetchAllUser();
+                    // Clear the selected keys
+                    setSelectedRowKeys([]);
+                } catch (error) {
+                    console.log(error);
+                    Swal.fire({
+                        title: "Error!",
+                        text: `${error}`,
+                        icon: "error"
+                    });
+                }
+            }
+        });
+    }
+
+    const InactiveMultipleUsers = async () => {
+        Swal.fire({
+            title: "Are you sure you want to Inactive selected users?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#4b6cb7",
+            cancelButtonColor: "#9f1239",
+            confirmButtonText: "Yes, delete them!"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    for (const id of selectedRowKeys) {
+                        await updateStatusToInactive(id, accessToken);
+                    }
+                    Swal.fire({
+                        title: "Success!",
+                        text: "Selected users have been deleted.",
+                        icon: "success"
+                    });
+                    // Reload the user list after deletion
+                    fetchAllUser();
+                    // Clear the selected keys
+                    setSelectedRowKeys([]);
+                } catch (error) {
+                    console.log(error);
+                    Swal.fire({
+                        title: "Error!",
+                        text: `${error}`,
+                        icon: "error"
+                    });
+                }
+            }
+        });
+    }
+
+    return (
         <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
-                <div className="flex gap-2 w-full">
-                    <Button onClick={handleReloadData} className="bg-[#407dc0] font-semibold text-white w-1/12">Reload</Button>
-                    <Button onClick={navigationToNewUser} className="bg-[#407dc0] font-semibold text-white w-1/12">New User</Button>
+                <div className="flex items-center justify-between gap-2 w-full">
+                    <div className="flex gap-1">
+                        <Button onClick={handleReloadData} className="bg-[#407dc0] font-semibold text-white w-32">Reload</Button>
+                        <Button onClick={navigationToNewUser} className="bg-[#407dc0] font-semibold text-white w-32">New User</Button>
+                        <Button onClick={navigationToNewMoreUser} className="bg-[#407dc0] font-semibold text-white w-32">New More User</Button>
+                    </div>
+                    <div className="flex gap-1">
+                        <Button type="primary" onClick={ActiveMultipleUsers} className="bg-[#4d7c0f] font-semibold text-white w-32 flex items-center justify-center" >Active Selected</Button>
+                        <Button type="primary" onClick={InactiveMultipleUsers}  className="bg-[#94a3b8] font-semiboldtext-white w-32 flex items-center justify-center" >Inactive Selected</Button>
+                        <Button type="primary" onClick={deleteMultipleUsers} className="bg-red-500 font-semibold text-white w-32 flex items-center justify-center" danger>Delete Selected</Button>
+                    </div>
                 </div>
                 <div className="text-xl"><span className="font-semibold">Total User:</span>  {users.length}</div>
             </div>
-            <Table dataSource={users} columns={columns} rowKey="_id" scroll={{ x: 1900, y: 600 }} />
+            <Table
+                dataSource={users}
+                columns={columns}
+                rowKey="_id"
+                rowSelection={rowSelection}
+                scroll={{ x: 1900, y: 600 }}
+            />
         </div>
     );
 }
